@@ -1565,7 +1565,7 @@ public class QueueImpl extends CriticalComponentImpl implements Queue {
                if (filter1 == null || filter1.match(reference.getMessage())) {
                   count++;
                   txCount++;
-                  messageAction.actMessage(tx, reference);
+                  messageAction.actMessage(tx, reference, false);
                } else {
                   addTail(reference, false);
                }
@@ -2771,7 +2771,7 @@ public class QueueImpl extends CriticalComponentImpl implements Queue {
             ref.acknowledge(tx, AckReason.KILLED);
          } else {
             ActiveMQServerLogger.LOGGER.messageExceededMaxDeliverySendtoDLA(ref, deadLetterAddress, name);
-            move(tx, deadLetterAddress,null,  ref, false, AckReason.KILLED);
+            move(tx, deadLetterAddress, null, ref, false, AckReason.KILLED);
          }
       } else {
          ActiveMQServerLogger.LOGGER.messageExceededMaxDeliveryNoDLA(ref, name);

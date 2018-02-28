@@ -1484,9 +1484,16 @@ public class QueueImpl extends CriticalComponentImpl implements Queue {
       return iterQueue(flushLimit, filter1, new QueueIterateAction() {
          @Override
          public void actMessage(Transaction tx, MessageReference ref) throws Exception {
+            actMessage(tx, ref, true);
+         }
+
+         @Override
+         public void actMessage(Transaction tx, MessageReference ref, boolean fromMessageReferences) throws Exception {
             incDelivering(ref);
             acknowledge(tx, ref, ackReason);
-            refRemoved(ref);
+            if (fromMessageReferences) {
+               refRemoved(ref);
+            }
          }
       });
    }
@@ -3191,6 +3198,10 @@ public class QueueImpl extends CriticalComponentImpl implements Queue {
    abstract class QueueIterateAction {
 
       public abstract void actMessage(Transaction tx, MessageReference ref) throws Exception;
+
+      public void actMessage(Transaction tx, MessageReference ref, boolean fromMessageReferences) throws Exception {
+         actMessage(tx, ref);
+      }
    }
 
    /* For external use we need to use a synchronized version since the list is not thread safe */
